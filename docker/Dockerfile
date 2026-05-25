@@ -63,6 +63,9 @@ RUN \
 # Disable redirection to https in .htaccess
 RUN sed -i -e '/Comment out/,/END/s/^/#/' "${RecipebookRoot}/.htaccess"
 
+# FIXME: This is the only file we copy in from the CWD.
+# With release 7.1, this should be changed to take the web-start.sh
+# script from the downloaded archive.
 COPY web-start.sh ${RecipebookRoot}/docker/web-start.sh
 
 # set directory and file ownershipt and permissions
@@ -73,7 +76,7 @@ RUN \
  && chown -R www-data:www-data ${RecipebookRoot}/logs \
  && chmod -R u+rw ${RecipebookRoot}/tmp \
  && find ${RecipebookRoot}/tmp ${RecipebookRoot}/logs -type d -print0 | xargs -0 chmod u+rwx \
- && chmod u+x ${RecipebookRoot}/docker/web-start.sh
+ && chmod a+rx ${RecipebookRoot}/docker/web-start.sh
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/ || exit 1
